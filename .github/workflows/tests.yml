@@ -8,7 +8,9 @@ on:
 jobs:
   test:
     timeout-minutes: 60
-    runs-on: ubuntu-latest
+    # Playwright install --with-deps падает на ubuntu-latest (24.04) из-за недоступных пакетов
+    # (например, libasound2/libffi7/libx264-163). На ubuntu-22.04 зависимости ставятся корректно.
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
