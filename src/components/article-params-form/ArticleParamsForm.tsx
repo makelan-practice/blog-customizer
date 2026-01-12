@@ -84,7 +84,7 @@ export const ArticleParamsForm = ({ articleState }: ArticleParamsFormProps) => {
 					<Separator />
 
 					<RadioGroup
-						name='fontSize'
+						name='radio'
 						title='Размер шрифта'
 						options={fontSizeOptions}
 						selected={draftState.fontSizeOption}
