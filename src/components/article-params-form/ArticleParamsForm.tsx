@@ -30,24 +30,24 @@ type ArticleParamsFormProps = {
 export const ArticleParamsForm = ({ articleState }: ArticleParamsFormProps) => {
 	const { initial, applied, apply } = articleState;
 
-	const [isOpen, setIsOpen] = useState(false);
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [draftState, setDraftState] = useState<ArticleStateType>(applied);
 
 	const rootRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		if (!isOpen) return;
+		if (!isMenuOpen) return;
 
 		const handleMouseDown = (event: MouseEvent) => {
 			const target = event.target;
 			if (target instanceof Node && !rootRef.current?.contains(target)) {
-				setIsOpen(false);
+				setIsMenuOpen(false);
 			}
 		};
 
 		globalThis.addEventListener('mousedown', handleMouseDown);
 		return () => globalThis.removeEventListener('mousedown', handleMouseDown);
-	}, [isOpen]);
+	}, [isMenuOpen]);
 
 	const handleApply = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -61,11 +61,14 @@ export const ArticleParamsForm = ({ articleState }: ArticleParamsFormProps) => {
 
 	return (
 		<div ref={rootRef}>
-			<ArrowButton isOpen={isOpen} onClick={() => setIsOpen((v) => !v)} />
+			<ArrowButton
+				isOpen={isMenuOpen}
+				onClick={() => setIsMenuOpen((v) => !v)}
+			/>
 
 			<aside
 				className={clsx(styles.container, {
-					[styles.container_open]: isOpen,
+					[styles.container_open]: isMenuOpen,
 				})}>
 				<form className={styles.form} onSubmit={handleApply}>
 					<Text as='h2' size={31} weight={800} uppercase>

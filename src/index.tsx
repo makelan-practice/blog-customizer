@@ -1,49 +1,11 @@
 import { createRoot } from 'react-dom/client';
-import { StrictMode, CSSProperties, useState } from 'react';
-import clsx from 'clsx';
-
-import { Article } from './components/article/Article';
-import { ArticleParamsForm } from './components/article-params-form/ArticleParamsForm';
-import {
-	ArticleStateType,
-	defaultArticleState,
-} from './constants/articleProps';
+import { StrictMode } from 'react';
+import { App } from './app/App';
 
 import './styles/index.scss';
-import styles from './styles/index.module.scss';
 
 const domNode = document.getElementById('root') as HTMLDivElement;
 const root = createRoot(domNode);
-
-const initialArticleState: ArticleStateType = defaultArticleState;
-
-const App = () => {
-	const [appliedArticleState, setAppliedArticleState] =
-		useState<ArticleStateType>(initialArticleState);
-
-	return (
-		<main
-			className={clsx(styles.main)}
-			style={
-				{
-					'--font-family': appliedArticleState.fontFamilyOption.value,
-					'--font-size': appliedArticleState.fontSizeOption.value,
-					'--font-color': appliedArticleState.fontColor.value,
-					'--container-width': appliedArticleState.contentWidth.value,
-					'--bg-color': appliedArticleState.backgroundColor.value,
-				} as CSSProperties
-			}>
-			<ArticleParamsForm
-				articleState={{
-					applied: appliedArticleState,
-					initial: initialArticleState,
-					apply: setAppliedArticleState,
-				}}
-			/>
-			<Article />
-		</main>
-	);
-};
 
 root.render(
 	<StrictMode>
