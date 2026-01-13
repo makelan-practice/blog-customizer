@@ -8,7 +8,9 @@ on:
 jobs:
   test:
     timeout-minutes: 60
-    runs-on: ubuntu-latest
+    # Playwright install --with-deps падает на ubuntu-latest (24.04) из-за недоступных пакетов
+    # (например, libasound2/libffi7/libx264-163). На ubuntu-22.04 зависимости ставятся корректно.
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
@@ -19,8 +21,24 @@ jobs:
       run: exit 1
     - name: Get testing lib
       run: set -eu && git clone https://github.com/Yandex-Practicum/tests-blog-customizer.git /tmp/tests-blog-customizer
-    - name: Run tests
-      run: bash /tmp/tests-blog-customizer/run.sh
+    # Не используем run.sh напрямую:
+    # - он запускает `npx playwright install --with-deps` из корня проекта (там нет playwright),
+    #   из-за чего npx ставит временный playwright и браузеры могут попасть не тому пользователю.
+    # - разделяем установку системных зависимостей и скачивание браузеров.
+    - name: Install deps & browsers
+      run: |
+        npm i -g wait-port@1.0.4
+        npm ci
+        npm ci --prefix /tmp/tests-blog-customizer
+        cd /tmp/tests-blog-customizer
+        npx playwright install-deps
+        npx playwright install
+    - name: Build project
+      run: npm run build
+    - name: Start project
+      run: npm run start & wait-port -t 30000 localhost:8080
+    - name: Run e2e tests
+      run: cd /tmp/tests-blog-customizer && npm run test
     - uses: actions/upload-artifact@v4
       if: always()
       with:
